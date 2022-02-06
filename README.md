@@ -1,11 +1,12 @@
 # Basic server with authentication
 
-Components
 - apollo-server-express
 - typescript
 - typeorm
 - express-session
 - bcryptjs
+
+---
 
 1. set up database settings in `ormconfig.json`
 2. yarn
