@@ -1,4 +1,3 @@
-// import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core';
 import { ApolloServer } from 'apollo-server-express';
 import * as express from 'express';
 import * as session from 'express-session';
