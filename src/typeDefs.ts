@@ -4,25 +4,28 @@ export const typeDefs = gql`
   scalar GraphQLDateTime
 
   type User {
-    id: ID!
+    user_id: ID!
     email: String!
   }
 
   type Post {
-    id: ID!
-    user_id: String!
+    post_id: ID!
+    user_id: ID!
     body: String!
     created_at: GraphQLDateTime!
   }
 
   type Query {
     me: User
-    post(id: ID!): Post
+    post(post_id: ID!): Post
+    posts(user_id: ID!): [Post!]!
+    myLikedPosts: [Post!]!
   }
 
   type Mutation {
     register(email: String!, password: String!): User
     login(email: String!, password: String!): User
-    addPost(body: String!): Post
+    createPost(body: String!): Post
+    likePost(post_id: ID!): Boolean
   }
 `;

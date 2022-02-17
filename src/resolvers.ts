@@ -1,16 +1,32 @@
 import * as bcrypt from 'bcryptjs';
 import { IResolvers } from 'graphql-tools';
+import { Like } from './entity/Like';
 import { Post } from './entity/Post';
 import { User } from './entity/User';
+
+const checkLoggedInSession = (req: any) => {
+  if (!req.session.userId) throw new Error('Not logged in');
+};
 
 export const resolvers: IResolvers = {
   Query: {
     me: (_, __, { req }) => {
-      if (!req.session.userId) throw new Error('Not logged in');
+      checkLoggedInSession(req);
       return User.findOne(req.session.userId);
     },
-    post: (_, { id }) => {
-      return Post.findOne(id);
+    post: (_, { post_id }) => {
+      return Post.findOne(post_id);
+    },
+    posts: (_, { user_id }) => {
+      return Post.find({ user_id: user_id });
+    },
+    myLikedPosts: async (_, __, { req }) => {
+      checkLoggedInSession(req);
+      const likes = await Like.find({
+        where: { user_id: req.session.userId },
+        relations: ['post'],
+      });
+      return likes.map(like => like.post);
     },
   },
   Mutation: {
@@ -21,27 +37,35 @@ export const resolvers: IResolvers = {
       const hashedPassword = await bcrypt.hash(password, 10);
       return await User.create({
         email,
-        password: hashedPassword,
+        hashed_password: hashedPassword,
       }).save();
     },
     login: async (_, { email, password }, { req }) => {
       const user = await User.findOne({ where: { email } });
       if (!user) throw new Error('Invalid login');
 
-      const valid = await bcrypt.compare(password, user.password);
+      const valid = await bcrypt.compare(password, user.hashed_password);
       if (!valid) throw new Error('Invalid login');
 
-      req.session.userId = user.id;
+      req.session.userId = user.user_id;
 
       return user;
     },
-    addPost: async (_, { body }, { req }) => {
-      if (!req.session.userId) throw new Error('Not logged in');
+    createPost: async (_, { body }, { req }) => {
+      checkLoggedInSession(req);
       return await Post.create({
         body,
         created_at: new Date(),
         user_id: req.session.userId,
       }).save();
+    },
+    likePost: async (_, { post_id }, { req }) => {
+      checkLoggedInSession(req);
+      await Like.create({
+        user_id: req.session.userId,
+        post_id,
+      }).save();
+      return true;
     },
   },
 };
