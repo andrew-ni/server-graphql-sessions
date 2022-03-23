@@ -5,11 +5,15 @@ import { Post } from './entity/Post';
 import { User } from './entity/User';
 
 const checkLoggedInSession = (req: any) => {
+  console.log(req.session.userId);
   if (!req.session.userId) throw new Error('Not logged in');
 };
 
 export const resolvers: IResolvers = {
   Query: {
+    ping: () => {
+      return true;
+    },
     me: (_, __, { req }) => {
       checkLoggedInSession(req);
       return User.findOne(req.session.userId);

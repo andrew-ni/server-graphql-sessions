@@ -11,17 +11,17 @@ import { Post } from './Post';
 @Entity('users')
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
-  user_id: number;
+  user_id!: number;
 
   @Column('varchar', { length: 50, nullable: false })
-  email: string;
+  email!: string;
 
   @Column('varchar', { length: 100, nullable: false })
-  hashed_password: string;
+  hashed_password!: string;
 
   @OneToMany(() => Post, post => post.user_id)
-  posts: Post[];
+  posts!: Post[];
 
   @OneToMany(() => Like, like => like.user_id)
-  likes: Like[];
+  likes!: Like[];
 }

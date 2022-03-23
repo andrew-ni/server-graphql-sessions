@@ -13,20 +13,20 @@ import { User } from './User';
 @Entity('posts')
 export class Post extends BaseEntity {
   @PrimaryGeneratedColumn()
-  post_id: number;
+  post_id!: number;
 
   @Column('timestamptz', { nullable: false })
-  created_at: Date;
+  created_at!: Date;
 
   @Column('text', { nullable: false })
-  body: string;
+  body!: string;
 
   @Column('integer', { nullable: false })
-  user_id: number;
+  user_id!: number;
   @ManyToOne(() => User, user => user.posts)
   @JoinColumn({ name: 'user_id' })
-  user: User;
+  user!: User;
 
   @OneToMany(() => Like, like => like.post_id)
-  likes: Like[];
+  likes!: Like[];
 }

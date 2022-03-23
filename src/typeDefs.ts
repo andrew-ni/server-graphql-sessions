@@ -16,6 +16,7 @@ export const typeDefs = gql`
   }
 
   type Query {
+    ping: Boolean
     me: User
     post(post_id: ID!): Post
     posts(user_id: ID!): [Post!]!
